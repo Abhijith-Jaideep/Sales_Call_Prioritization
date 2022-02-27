@@ -35,7 +35,7 @@ class customer(db.Model):
     productcategory=db.Column(db.String(50))
     annualincome=db.Column(db.String(50))
     leadquality=db.Column(db.String(50))
-    datecreated = db.Column(db.DateTime(timezone=True), default=datetime.utcnow())
+    datecreated = db.Column(db.DateTime(timezone=True), default=datetime.now())
 
 
 
@@ -189,22 +189,36 @@ def user(username, name, email, phone_no):
     detail=cur.fetchall()
 
     if request.method == 'POST':
-        personid = request.form['personid']
-        maxeducation = request.form['maxeducation']
-        annualincome = request.form['annualincome']
-        stage = request.form['stage']
-        primaryoccupation = request.form['primaryoccupation']
+        fname=request.form['fname']
+        lname=request.form['lname']
+        gender=request.form['gender'] 
+        dob=request.form['dob']
+        phno=request.form['phno']
+        city=request.form['city']
+        statename=request.form['statename']
+        zip=request.form['zip']
+        primarylanguage=request.form['primarylanguage']
+        primaryoccupation=request.form['primaryoccupation']
+        maxeducation=request.form['maxeducation']
+        maritalstatus=request.form['maritalstatus']
+        annualincome=request.form['annualincome']
+        productcategory=request.form['productcategory']
         
         conn = pg.connect(database="Suyati", user="postgres", host="localhost", password="password")
         scur= conn.cursor()
         query="select max(sno) from customer"
         scur.execute(query)
         SNO=scur.fetchall()
-        obj = customer(sno=SNO[0][0]+1,personId=personid, MaxEducation=maxeducation,PrimaryOccupation=primaryoccupation,Stage=stage,AnnualIncome=annualincome)
+        
+
+        obj=customer(sno=SNO[0][0]+1,firstname=fname,lastname=lname,gender=gender,dob=dob,personphone=phno,city=city,
+        statename=statename,zip=zip,primarylanguage=primarylanguage,primaryocc=primaryoccupation,maxeducationlevel=maxeducation,annualincome=annualincome,maritalstatus=maritalstatus,productcategory=productcategory)
         db.session.add(obj)
         db.session.commit()
+
         scur.close()
         conn.close()
+        flash("information entered Successfully")
 
         query = "select * from customer"
 
@@ -214,7 +228,7 @@ def user(username, name, email, phone_no):
 
         with open('final_table.csv', 'w') as f:
             writer = csv.writer(f, delimiter=',')
-            writer.writerow(('sno','personId', 'MaxEducation', 'PrimaryOccupation', 'Stage', 'AnnualIncome', 'leadquality'))
+            writer.writerow(("sno","firstname","lastname","gender","dob","personphone","city","statename","zip","primarylanguage","primaryocc","maxeducationlevel","maritalstatus","productcategory","annualincome","leadquality","datecreated"))
             for row in cur.fetchall():
                 writer.writerow(row)
 
@@ -237,7 +251,6 @@ def user(username, name, email, phone_no):
         conn.commit()
         cur.close()
         conn.close()
-       
 
         return redirect(url_for("results",result=result))    
 
