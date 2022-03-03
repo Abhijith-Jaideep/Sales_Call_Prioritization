@@ -41,6 +41,7 @@ class customer(db.Model):
 
 class users(db.Model):
     __bind_key__ = 'two'
+    
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     First_name = db.Column(db.String(50), nullable=False)
     Email = db.Column(db.String(50))
